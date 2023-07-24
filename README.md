@@ -1,2 +1,3 @@
 # Timeseries-using-LSTM
-Python Notebook by ahmad
+Python Notebook by peterparkar
+
