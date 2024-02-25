@@ -1,0 +1,645 @@
+ANN MODEL
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Flatten, Dense
+from tensorflow.keras.utils import to_categorical
+# Load and preprocess the MNIST dataset
+(X_train, y_train), (
+# Normalize the pixel values to range [0, 1]
+X_train = X_train.astype('float32') / 255.0
+X_test = X_test.astype('float32') / 255.0
+# Flatten the 28x28 images to a 1D vector of 784 features
+X_train = X_train.reshape(-1, 28*28)
+X_test = X_test.reshape(-1, 28*28)
+# One-hot encode the target labels
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+# Build the ANN model
+model = Sequential([
+Dense(128, activation='relu', input_shape=(784,)),
+Dense(64, activation='relu'),
+Dense(10, activation='softmax')
+])
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+# Train the model
+model.fit(X_train, y_train, epochs=10, batch_size=128, validation_split=0.1)X_test, y_test) = mnist.load_data()
+# Evaluate the model on the test set
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
+
+
+CNN MODEL 
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.utils import to_categorical
+# Load and preprocess the MNIST dataset
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+# Normalize the pixel values to range [0, 1]
+X_train = X_train.astype('float32') / 255.0
+X_test = X_test.astype('float32') / 255.0
+# Reshape the data to add a channel dimension for grayscale images (1 channel)
+X_train = X_train.reshape(-1, 28, 28, 1)
+X_test = X_test.reshape(-1, 28, 28, 1)
+# One-hot encode the target labels
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+# Build the CNN model
+model = Sequential([
+Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+MaxPooling2D((2, 2)),
+Conv2D(64, (3, 3), activation='relu'),
+MaxPooling2D((2, 2)),
+Flatten(),
+Dense(128, activation='relu'),
+Dense(10, activation='softmax')
+])
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+# Train the model
+model.fit(X_train, y_train, epochs=10, batch_size=128, validation_split=0.1)
+# Evaluate the model on the test set
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
+
+
+
+RNN MODEL
+
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense,Activation,SimpleRNN
+from keras.utils import to_categorical,plot_model
+from keras.datasets import mnist
+(x_train,y_train),(x_test,y_test)=mnist.load_data()
+#CONVERT TO ONE-HOT VECTOR
+y_train=to_categorical(y_train)
+y_test=to_categorical(y_test)
+# Flatten the 28x28 images to a 1D vector of 784 features
+X_train = X_train.reshape(-1, 28,28)
+X_test = X_test.reshape(-1, 28,28)
+#network parameters
+image_size=28
+input_shape=(image_size,image_size)
+batch_size=128
+units=28
+dropout=0.2
+#model is RNN with 256 units,input-28dim vector with 28 timesteps
+model=Sequential()
+model.add(SimpleRNN(units=units,input_shape=input_shape))
+model.add(Dense(10))
+model.add(Activation('softmax'))
+model.summary()
+#to compile the model
+model.compile(optimizer="adam", loss = 'categorical_crossentropy', metrics = ['accuracy'])
+model.fit(x_train,y_train,epochs=20,batch_size=batch_size)
+loss,acc=model.evaluate(x_test,y_test,batch_size=batch_size)
+print("\nTest accuracy:%.1f%%" % (100.0*acc))
+
+
+
+LSTM MODEL
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+# Load and preprocess the MNIST dataset
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+# Normalize the pixel values to range [0, 1]
+X_train = X_train.astype('float32') / 255.0
+X_test = X_test.astype('float32') / 255.0
+X_train = X_train.reshape(-1,28,28)
+X_test = X_test.reshape(-1,28,28)
+# One-hot encode the target labels
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+# Build the LSTM model
+model = Sequential([
+LSTM(128, input_shape=(28,28)),
+Dense(10, activation='softmax')
+])
+# Compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+# Train the model
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.1)
+# Evaluate the model on the test set
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
+
+
+
+
+import matplotlib.pyplot as plt
+import tensorflow as tf
+import zipfile
+import pandas as pd
+import numpy as np
+from tensorflow import keras
+from tensorflow.keras import layers
+import pylab
+
+import keras
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Dense, Flatten
+from keras.models import Sequential
+
+!unzip "/content/drive/MyDrive/cats_and_dogs_filtered.zip" -d "/content/drive/MyDrive/cats_and_dogs_filtered"
+
+import matplotlib.pyplot as plt
+im = plt.imread('/content/drive/MyDrive/cats_and_dogs_filtered/cats_and_dogs_filtered/train/cats/cat.897.jpg')
+plt.imshow(im)
+plt.show()
+
+!pip install split-folders
+
+import splitfolders
+splitfolders.ratio("/content/drive/MyDrive/cats_and_dogs_filtered/cats_and_dogs_filtered/train",output = "output",seed = 1337,ratio = (.8, .2))
+
+Load datas
+
+split=0.2
+seed=19260817
+batch_size=256
+img_size=(224,224)
+
+train_ds = keras.utils.image_dataset_from_directory(
+    '/content/output/train',
+    labels="inferred",
+    label_mode="int",
+    color_mode="rgb",
+    batch_size=batch_size,
+    image_size=img_size,
+    shuffle=True,
+    seed=seed,
+    validation_split=split,
+    subset='training',
+)
+val_ds = keras.utils.image_dataset_from_directory(
+    '/content/output/train',
+    labels="inferred",
+    label_mode="int",
+    color_mode="rgb",
+    batch_size=batch_size,
+    image_size=img_size,
+    shuffle=True,
+    seed=seed,
+    validation_split=split,
+    subset='validation',
+)
+
+label_names={0:'cat',1:'dog'}
+
+fig, ax = plt.subplots(figsize=(15, 7))
+for img, label in train_ds.take(1):
+    for i in range(12):
+        plt.subplot(3, 4,i+1)
+        plt.imshow(img.numpy()[i]/255)
+        plt.axis("off")
+        plt.title("label: "+label_names[label.numpy()[i]])
+        #rint("label:", label.numpy()[i])
+plt.show()
+
+ load VGG model
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+def plot_history(history,title=''):
+    if title!='':
+        title+=' '
+    #Ploting the Loss and Accuracy Curves
+    fig, ax = plt.subplots(nrows = 1, ncols = 2, figsize = (16,6))
+    #Loss
+    sns.lineplot(data = history.history['loss'], label = 'Training Loss', ax = ax[0])
+    sns.lineplot(data = history.history['val_loss'], label = 'Validation Loss', ax = ax[0])
+    ax[0].legend(loc = 'upper right')
+    ax[0].set_title(title+'Loss')
+    #Accuracy
+    sns.lineplot(data = history.history['accuracy'], label = 'Training Accuracy', ax = ax[1])
+    sns.lineplot(data = history.history['val_accuracy'], label = 'Validation Accuracy', ax = ax[1])
+    ax[1].legend(loc = 'lower right')
+    ax[1].set_title(title+'Accuracy')
+
+ augmentation
+
+data_augmentation = keras.Sequential(
+    [
+        #layers.RandomFlip("horizontal"),
+        #layers.RandomRotation(0.2),
+        #layers.RandomTranslation(0.14,0.14),
+        #layers.RandomZoom(0.2),
+        #layers.RandomContrast(0.2),
+    ]
+)
+
+callback
+
+CB = [
+            keras.callbacks.ModelCheckpoint(
+            filepath="fine_tuning.keras",
+            save_best_only=True,
+            monitor="val_loss"),
+
+            keras.callbacks.EarlyStopping(
+            monitor='val_loss',
+            min_delta=0.0005,
+            patience=10)
+]
+
+vgg16 model
+
+vgg16_base  = keras.applications.vgg16.VGG16(
+    weights="imagenet",
+    #weights=None,
+    include_top=False)
+
+#vgg16_base.trainable = True
+vgg16_base.trainable = False
+
+print("This is the number of trainable weights "
+      "before freezing the conv base:", len(vgg16_base.trainable_weights))
+
+vgg16_base.summary()
+
+inputs = keras.Input(shape=img_size+(3,))
+x = data_augmentation(inputs)
+x = keras.applications.vgg16.preprocess_input(x)
+x = vgg16_base(x)
+x = layers.Flatten()(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+outputs = layers.Dense(2, activation="softmax")(x)
+vgg16_model = keras.Model(inputs, outputs)
+vgg16_model.compile(optimizer="adam",
+              loss="sparse_categorical_crossentropy",
+              metrics=["accuracy"])
+vgg16_model.summary()
+
+history_vgg16 = vgg16_model.fit(
+    train_ds,
+    epochs=100,
+    validation_data=val_ds,
+    callbacks=CB
+    )
+vgg16_model = keras.models.load_model("fine_tuning.keras")
+
+plot_history(history_vgg16,'vgg16')
+
+vgg19 model
+
+vgg19_base  = keras.applications.vgg19.VGG19(
+    weights="imagenet",
+    include_top=False)
+
+#vgg19_base.trainable = True
+vgg19_base.trainable = False
+
+
+print("This is the number of trainable weights "
+      "before freezing the conv base:", len(vgg19_base.trainable_weights))
+
+vgg19_base.summary()
+
+inputs = keras.Input(shape=img_size+(3,))
+x = data_augmentation(inputs)
+x = keras.applications.vgg19.preprocess_input(x)
+x = vgg19_base(x)
+x = layers.Flatten()(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256,activation='softplus')(x)
+x = layers.BatchNormalization()(x)
+x = layers.Dropout(0.5)(x)
+outputs = layers.Dense(2, activation="softmax")(x)
+vgg19_model = keras.Model(inputs, outputs)
+vgg19_model.compile(optimizer="rmsprop",
+              loss="sparse_categorical_crossentropy",
+              metrics=["accuracy"])
+vgg16_model.summary()
+
+history_vgg19 = vgg19_model.fit(
+    train_ds,
+    epochs=100,
+    validation_data=val_ds,
+    callbacks=CB
+    )
+vgg19_model = keras.models.load_model("fine_tuning.keras")
+
+plot_history(history_vgg19,'vgg19')
+
+LeNet
+
+import tensorflow as tf
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, AveragePooling2D, Flatten, Dense, Dropout, BatchNormalization
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
+from keras.utils.vis_utils import plot_model
+
+labels = ["cats", "dogs"]
+classNameslabels = {labels: i for i, labels in enumerate(labels)}
+
+print(classNameslabels)
+
+import pandas as pd
+from pathlib import Path
+import os
+
+train_image_path=Path("/content/output/train")
+image_path=list(train_image_path.glob(r"**/*.jpg"))
+image_label=list(map(lambda x:os.path.split(os.path.split(x)[0])[1],image_path))
+final_data = pd.DataFrame({'data':image_path, 'label':image_label}).astype('str')
+
+final_data
+
+final_data =final_data.sample(frac=1).reset_index(drop=True)
+
+plt.figure(figsize=(15,15))
+num_img=(5,5)
+for i in range(1,(num_img[0]*num_img[1])+1):
+    plt.subplot(num_img[0],num_img[1],i)
+    plt.axis("off")
+    plt.title(final_data["label"][i])
+    plt.imshow(plt.imread(final_data["data"][i]))
+
+image_shape=28
+def datasetLoaderFromDirectory():
+        dataset_path = ["/content/output/train", "/content/output/val"]
+        imageataOutput = []
+
+        for i in dataset_path:
+            images = []
+            labels = []
+            print("Counting : {}".format(i))
+
+            for j in os.listdir(i):
+                label = classNameslabels[j]
+
+                for imagedatafile in tqdm(os.listdir(os.path.join(i, j))):
+
+                    imagePath = os.path.join(os.path.join(i, j), imagedatafile)
+
+                    image = cv2.imread(imagePath)
+                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    image = cv2.resize(image,(image_shape,image_shape))
+
+                    images.append(image)
+                    labels.append(label)
+            images = np.array(images)
+            labels = np.array(labels)
+            #print(images)
+            imageataOutput.append((images, labels))
+
+        return imageataOutput
+
+from tqdm import tqdm
+import cv2
+
+(train_image, train_labels), (test_image, test_labels) = datasetLoaderFromDirectory()
+
+from sklearn.utils import shuffle
+train_image, train_labels = shuffle(train_image, train_labels, random_state = 101)
+
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+label_Encoder = LabelEncoder()
+#label_Encoder = preprocessing.LabelEncoder
+ytrain = label_Encoder.fit_transform(train_labels)
+ytest = label_Encoder.fit_transform(test_labels)
+
+#OneHotEncoder for train dataset
+labelEncoderValue=ytrain.reshape(len(ytrain),1)
+ohe=OneHotEncoder(sparse=False)
+Ytrain=ohe.fit_transform(labelEncoderValue)
+
+#OneHotEncoder for test dataset
+labelEncoderValue=ytest.reshape(len(ytest),1)
+ohe=OneHotEncoder(sparse=False)
+y_test=ohe.fit_transform(labelEncoderValue)
+
+Ytrain.shape
+
+model = Sequential() # Empty
+
+# 1st layer
+model.add(Conv2D(6,kernel_size = (5, 5), strides = (1, 1), activation = "relu", input_shape = (28, 28, 3), padding = "same"))
+model.add(AveragePooling2D(pool_size = (2, 2), strides = (2, 2), padding = "valid"))
+
+# 2nd Layer
+model.add(Conv2D(16,kernel_size = (5, 5), strides = (1, 1), activation = "relu", padding = "valid"))
+model.add(AveragePooling2D(pool_size = (2, 2), strides = (2, 2), padding = "valid"))
+
+# Flatten Layer
+model.add(Flatten())
+
+# Output Layer
+model.add(Dense(120, activation = "relu"))
+model.add(Dense(84, activation = "relu"))
+model.add(Dense(2, activation = "softmax"))
+
+model.compile(optimizer = "adam",
+             loss = "categorical_crossentropy",
+             metrics = ["accuracy"])
+
+model.summary()
+
+tensorboard=TensorBoard(log_dir="logs")
+checkpoint=ModelCheckpoint("LeNet.h5",
+                          monitor='val_accuracy',
+                          mode="auto",
+                          verbose=1,
+                          save_best_only=True
+                          )
+
+reduce_LR=ReduceLROnPlateau(monitor='val_accuracy',
+                           factor=0.1,
+                            patience=10,
+                            min_delta=0.001,
+                            mode="auto",
+                            verbose=1
+                           )
+earlyStopping = EarlyStopping(monitor='val_acc',
+                             patience=5,
+                             verbose=1,
+                             mode='auto')
+
+history = model.fit(train_image,
+                   Ytrain,
+                   batch_size=32,
+                   epochs=50,
+                   verbose=1,
+                   validation_split=0.2,
+                   callbacks=[tensorboard, checkpoint, reduce_LR, earlyStopping]
+                   )
+
+pred=model.predict(test_image)
+
+def accuracy_and_loss_Plot(modelData):
+
+    fig=plt.figure(figsize=(10,10))
+
+    plt.subplot(221)
+    plt.plot(modelData.history["accuracy"], 'bo--',label='accuracy')
+    plt.plot(modelData.history["val_accuracy"],'ro--',label='val_accuracy')
+    plt.title(" Accuracy Measurements")
+    plt.xlabel("Number of Epochs")
+    plt.ylabel("Accuracy Information")
+    #plt.grid()
+    plt.legend()
+    plt.tight_layout()
+
+    plt.subplot(222)
+    plt.plot(modelData.history["loss"], 'bo--',label='loss')
+    plt.plot(modelData.history["val_loss"],'ro--',label='val_loss')
+    plt.title("Loss Measurements")
+    plt.xlabel("Number of Epochs")
+    plt.ylabel("Loss Information")
+    #plt.grid()
+    plt.legend()
+    plt.tight_layout()
+
+accuracy_and_loss_Plot(history)
+
+Compare two models
+
+vgg16_test=vgg16_model.evaluate(val_ds)
+vgg19_test=vgg19_model.evaluate(val_ds)
+
+
+
+VGG 16
+
+from google.colab import drive
+drive.mount ("/content/drive")
+import matplotlib.pyplot as plt
+im= plt.imread("/content/drive/MyDrive/Rice_Image_Dataset/Ipsala (1)/Ipsala
+plt.imshow(im)
+plt.show()
+print(im.shape)
+pip install split-folders
+#split with a ratio
+#to only split into training and validation set, set a tuple to ratio,(.8,.2)
+import splitfolders
+splitfolders.ratio("/content/drive/MyDrive/Rice_Image_Dataset", output="output",seed=1337, ratio=(.8,.2))
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+#all images will be rescaled by 1./255
+train_data=ImageDataGenerator(
+    rescale=1./255,
+    )
+test_data=ImageDataGenerator(rescale=1./255)
+train_generator=train_data.flow_from_directory(
+    "/content/output/train",
+    target_size=(250,250),
+    batch_size=20,
+    class_mode='binary')
+validation_generator= test_data.flow_from_directory(
+    "/content/output/val",
+    target_size=(250,250),
+    batch_size=20,
+    class_mode='binary'
+)
+import matplotlib.pyplot as plt
+import numpy as np
+import PIL
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Dropout, Flatten, Conv2D, MaxPoo
+from tensorflow.keras.layers import BatchNormalization
+np.random.seed(1000)
+batch_size=128
+img_height=224
+img_width=224
+
+
+GOOGLE STOCK PRICE
+
+import numpy as np
+import matplotlib.pyplot as plt
+import  pandas as pd
+dataset_train=pd.read_csv("/content/Google_Stock_Price_Train.csv")
+dataset_train
+dataset_test=pd.read_csv("/content/Google_Stock_Price_Test.csv")
+dataset_test
+training_set=dataset_train.iloc[:,1:2].values
+training_set
+
+#feature scaling
+from sklearn.preprocessing import MinMaxScaler
+sc=MinMaxScaler(feature_range=(0,1))
+training_set_scaled= sc.fit_transform(training_set)
+
+#60 previous financial days in 3 months
+X_train=[]
+y_train=[]
+for i in range(60,1258):
+  X_train.append(training_set_scaled[i-60:i,0])
+  y_train.append(training_set_scaled[i,0])
+X_train, y_train= np.array(X_train), np.array(y_train)
+X_train=np.reshape(X_train,(X_train.shape[0],X_train.shape[1],1))
+X_train.shape
+
+from keras.models import Sequential
+from keras.layers import Dense, Activation, SimpleRNN
+
+#model is Rnn
+model= Sequential()
+model.add(SimpleRNN(units=50, input_shape=(X_train.shape[1],1)))
+model.add(Dense(1))
+model.add(Activation('softmax'))
+model.summary()
+model.compile(optimizer='adam',loss='mean_squared_error',metrics=['mse'])
+model.fit(X_train, y_train, epochs=10)
+
+
+#lstm
+from keras.layers import LSTM
+model1= Sequential()
+model1.add(LSTM(units=10, input_shape=(X_train.shape[1],1)))
+model1.add(Dense(1))
+model1.add(Activation('softmax'))
+model1.summary()
+model1.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['mse'])
+model1.fit(X_train, y_train, epochs=10)
+
+
+#stacked LSTM
+model2= Sequential()
+model2.add(LSTM(units=10, return_sequences=True, input_shape=(X_train.shape[1],1)))
+model2.add(LSTM(units=60, return_sequences=True))
+model2.add(LSTM(units=100, return_sequences=True))
+model2.add(LSTM(units=140, return_sequences=False))
+model2.add(Dense(1))
+model2.add(Activation('softmax'))
+model2.summary()
+model2.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['mse'])
+model2.fit(X_train, y_train, epochs=10)
